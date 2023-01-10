@@ -44,11 +44,7 @@ kube-system   kube-proxy-9c8jw                           1/1     Running   0    
 
 ## Cleanup
 
-```
-## Cleanup
-
-To delete all pods from the test in the cluster run
-
+To destroy all provisioned AWS resources:
 ```
 terraform destroy
 ```
