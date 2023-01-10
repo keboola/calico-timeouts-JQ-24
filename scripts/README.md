@@ -11,7 +11,7 @@ Finding the dreaded `curl: (28) Operation timed out after 20001 milliseconds wit
 - There are 50 `Pods` created in a single batch.
 - There are 10 batches executed with a 10 seconds delay between them.
 
-The connection/network errors usually start showing up after 3rd batch when >50 pods are running and new pods are arriving at the same time with a number of already finished pods.
+The connection/network errors usually start showing up around 6th batch when >50 pods are running and new pods are arriving at the same time with a larger number of already finished pods.
 
 ## Detection
 
