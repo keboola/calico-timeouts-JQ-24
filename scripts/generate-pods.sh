@@ -15,7 +15,7 @@ data:
   test.sh: |
     #!/bin/bash
     set -e
-
+    sleep 10
     for i in {1..20}
     do
       echo "Request $i"

@@ -25,10 +25,8 @@ aws eks --region eu-central-1 update-kubeconfig --name keboola-calico-timeouts-J
 
 Install Calico CNI:
 ```
-./deploy-calico.sh
+./deploy-calico-network-policies.sh
 
-# Replace nodes
-aws autoscaling  start-instance-refresh --region eu-central-1 --auto-scaling-group-name=$(terraform output --raw autoscaling_group_name) --strategy Rolling
 ```
 
 Verify that system pods are running. It should provide similar output:
