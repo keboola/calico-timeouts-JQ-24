@@ -11,3 +11,4 @@ spec:
     ipPools:
       - cidr: "100.64.0.0/16"
         encapsulation: VXLANCrossSubnet
+        blockSize: 24
