@@ -3,8 +3,8 @@ provider "aws" {
 
   default_tags {
     tags = {
-      KeboolaStack = "keboola-calico-timeouts-JQ-24"
-      KeboolaRole  = "keboola-calico-timeouts-JQ-24"
+      KeboolaStack = "keboola-stuck-docker-JQ-48"
+      KeboolaRole  = "keboola-stuck-docker-JQ-48"
     }
   }
 }
@@ -27,7 +27,7 @@ provider "kubernetes" {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
     # This requires the awscli to be installed locally where Terraform is executed
-    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
+    args = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
   }
 }
 
@@ -73,7 +73,7 @@ module "eks" {
       max_size     = 1
       desired_size = 1
 
-      instance_type                          = "r6a.4xlarge"
+      instance_type                          = "r6a.2xlarge"
       update_launch_template_default_version = true
 
     }

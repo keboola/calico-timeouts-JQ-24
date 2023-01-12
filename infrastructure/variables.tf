@@ -5,6 +5,6 @@ variable "region" {
 }
 
 variable "cluster_name" {
-  type = string
-  default = "keboola-calico-timeouts-JQ-24"
+  type    = string
+  default = "keboola-stuck-docker-JQ-48"
 }
