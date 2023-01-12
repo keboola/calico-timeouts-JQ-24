@@ -73,7 +73,7 @@ module "eks" {
       max_size     = 1
       desired_size = 1
 
-      instance_type                          = "r6a.4xlarge"
+      instance_type                          = "r5a.4xlarge"
       update_launch_template_default_version = true
 
     }

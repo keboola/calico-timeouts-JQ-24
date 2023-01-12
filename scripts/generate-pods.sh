@@ -15,7 +15,6 @@ data:
   test.sh: |
     #!/bin/bash
     set -e
-
     for i in {1..20}
     do
       echo "Request $i"
