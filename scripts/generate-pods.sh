@@ -57,7 +57,7 @@ spec:
   - effect: NoSchedule
     key: app
     operator: Equal
-    value: job-queue-jobs-short-run-time
+    value: job-queue-jobs
   - effect: NoExecute
     key: node.kubernetes.io/not-ready
     operator: Exists
@@ -66,6 +66,8 @@ spec:
     key: node.kubernetes.io/unreachable
     operator: Exists
     tolerationSeconds: 300
+  nodeSelector:
+    nodepool: job-queue-jobs
   volumes:
   - name: test-scripts-volume
     configMap:

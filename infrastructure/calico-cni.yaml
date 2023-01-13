@@ -4750,3 +4750,18 @@ spec:
                 - /usr/bin/check-status
                 - -r
             periodSeconds: 10
+---
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  name: job-queue-jobs-ipv4-ippool
+spec:
+  allowedUses:
+    - Workload
+    - Tunnel
+  blockSize: 24
+  cidr: 100.65.0.0/16
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: "nodepool in { 'job-queue-jobs', 'job-queue-jobs-large', 'job-queue-jobs-short-run-time', 'job-queue-jobs-long-run-time' }"
+  vxlanMode: CrossSubnet
