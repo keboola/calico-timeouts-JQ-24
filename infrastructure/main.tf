@@ -73,8 +73,20 @@ module "eks" {
       max_size     = 1
       desired_size = 1
 
-      instance_type                          = "r6a.4xlarge"
+      instance_type                          = "t3a.large"
       update_launch_template_default_version = true
+
+    }
+
+    jobs = {
+      name         = "jobs"
+      max_size     = 1
+      desired_size = 1
+
+      instance_type                          = "r5a.4xlarge"
+      update_launch_template_default_version = true
+
+      bootstrap_extra_args = "--kubelet-extra-args '--node-labels=nodepool=job-queue-jobs --register-with-taints=app=job-queue-jobs:NoSchedule'"
 
     }
   }
