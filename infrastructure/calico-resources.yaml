@@ -1,0 +1,15 @@
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  name: kbc-default
+spec:
+  cidr: 100.66.0.0/15
+  blockSize: 24
+  vxlanMode: CrossSubnet
+  ipipMode: Never
+  natOutgoing: true
+  disabled: false
+  nodeSelector: all()
+  allowedUses:
+    - Workload
+    - Tunnel
