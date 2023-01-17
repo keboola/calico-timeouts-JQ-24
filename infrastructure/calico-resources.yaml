@@ -28,3 +28,4 @@ spec:
   natOutgoing: true
   nodeSelector: all()
   vxlanMode: CrossSubnet
+  disabled: true
