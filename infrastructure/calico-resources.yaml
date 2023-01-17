@@ -13,3 +13,18 @@ spec:
   allowedUses:
     - Workload
     - Tunnel
+---
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  name: default-ipv4-ippool
+spec:
+  allowedUses:
+    - Workload
+    - Tunnel
+  blockSize: 26
+  cidr: 100.64.0.0/16
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: all()
+  vxlanMode: CrossSubnet
