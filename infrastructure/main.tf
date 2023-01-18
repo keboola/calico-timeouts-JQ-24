@@ -27,13 +27,13 @@ provider "kubernetes" {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
     # This requires the awscli to be installed locally where Terraform is executed
-    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
   }
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "18.30.2"
+  version = "19.5.1"
 
   cluster_name                    = local.name
   cluster_version                 = local.cluster_version
@@ -45,6 +45,19 @@ module "eks" {
 
   create_aws_auth_configmap = true
   manage_aws_auth_configmap = true
+
+  cluster_addons = {
+    coredns = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent          = true
+      configuration_values = "{\"env\":{\"AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG\":\"true\",\"ENI_CONFIG_LABEL_DEF\":\"failure-domain.beta.kubernetes.io/zone\",\"ENABLE_PREFIX_DELEGATION\":\"true\",\"WARM_PREFIX_TARGET\":\"1\"}}"
+    }
+  }
 
   node_security_group_additional_rules = {
     ingress_vxlan = {
@@ -73,7 +86,7 @@ module "eks" {
       max_size     = 1
       desired_size = 1
 
-      instance_type                          = "r6a.4xlarge"
+      instance_type                          = "t3a.large"
       update_launch_template_default_version = true
 
     }
@@ -112,3 +125,89 @@ module "vpc" {
   }
 
 }
+
+resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr" {
+  vpc_id     = module.vpc.vpc_id
+  cidr_block = "100.66.0.0/16"
+}
+
+resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr_2" {
+  vpc_id     = module.vpc.vpc_id
+  cidr_block = "100.67.0.0/16"
+}
+
+
+resource "aws_subnet" "pods_a" {
+  vpc_id            = aws_vpc_ipv4_cidr_block_association.secondary_cidr.vpc_id
+  cidr_block        = "100.66.0.0/17"
+  availability_zone = "${var.region}a"
+
+  tags = {
+    Name = "pods-a"
+  }
+}
+
+
+resource "aws_subnet" "pods_b" {
+  vpc_id            = aws_vpc_ipv4_cidr_block_association.secondary_cidr.vpc_id
+  cidr_block        = "100.66.128.0/17"
+  availability_zone = "${var.region}b"
+
+  tags = {
+    Name = "pods-b"
+  }
+}
+
+resource "aws_subnet" "pods_c" {
+  vpc_id            = aws_vpc_ipv4_cidr_block_association.secondary_cidr_2.vpc_id
+  cidr_block        = "100.67.0.0/17"
+  availability_zone = "${var.region}c"
+
+  tags = {
+    Name = "pods-c"
+  }
+}
+
+
+resource "kubernetes_manifest" "cni_config_a" {
+  manifest = {
+    "apiVersion" = "crd.k8s.amazonaws.com/v1alpha1"
+    "kind"       = "ENIConfig"
+    "metadata"   = {
+      "name" = aws_subnet.pods_a.availability_zone
+    }
+    "spec" = {
+      subnet         = aws_subnet.pods_a.id
+      securityGroups = [module.eks.node_security_group_id]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "cni_config_b" {
+  manifest = {
+    "apiVersion" = "crd.k8s.amazonaws.com/v1alpha1"
+    "kind"       = "ENIConfig"
+    "metadata"   = {
+      "name" = aws_subnet.pods_b.availability_zone
+    }
+    "spec" = {
+      subnet         = aws_subnet.pods_b.id
+      securityGroups = [module.eks.node_security_group_id]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "cni_config_c" {
+  manifest = {
+    "apiVersion" = "crd.k8s.amazonaws.com/v1alpha1"
+    "kind"       = "ENIConfig"
+    "metadata"   = {
+      "name" = aws_subnet.pods_c.availability_zone
+    }
+    "spec" = {
+      subnet         = aws_subnet.pods_c.id
+      securityGroups = [module.eks.node_security_group_id]
+    }
+  }
+}
+
